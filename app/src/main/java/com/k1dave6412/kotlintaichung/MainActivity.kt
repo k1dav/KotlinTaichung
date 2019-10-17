@@ -10,14 +10,22 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.k1dave6412.kotlintaichung.PaginationListener.Companion.PAGE_START
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
 
+class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     private val sharedPreferences by lazy {
         getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     }
-
+    private val layoutManager: LinearLayoutManager by lazy {
+        LinearLayoutManager(this)
+    }
+    private val adapter: RecyclerViewAdapter by lazy {
+        RecyclerViewAdapter()
+    }
 
     private fun initListener() {
         fabMain.setOnClickListener {
@@ -53,6 +61,24 @@ class MainActivity : AppCompatActivity() {
                 .create()
             dialog.show()
         }
+
+        swipeRefresh.setOnRefreshListener(this)
+        recyclerView.addOnScrollListener(object : PaginationListener(layoutManager){
+            override fun loadMoreItems() {
+                isLoading = true
+                currentPage++
+                generateFakeData()
+            }
+
+            override fun isLastPage(): Boolean {
+                return isLastPage
+            }
+
+            override fun isLoading(): Boolean {
+                return isLoading
+            }
+
+        })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +86,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initListener()
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = adapter
+        generateFakeData()
+    }
+
+    override fun onRefresh() {
+        elementCount = 0
+        currentPage = PAGE_START
+        isLastPage = false
+        adapter.clear()
+        generateFakeData()
     }
 
 
@@ -83,8 +121,42 @@ class MainActivity : AppCompatActivity() {
         isFabOpen = !isFabOpen
     }
 
+    private fun generateFakeData() {
+        val elements: MutableList<ListElement> = mutableListOf()
+
+        for (i in 0..9) {
+            elementCount++
+            val element = ListElement(
+                id = "id=$i",
+                orderCreateAt = "c=$i",
+                packageNo = "p=$i",
+                status = "成功",
+                receiverName = "RECE=$i",
+                receiverPhone = "phon$i",
+                receiverID = "receive$i"
+            )
+            elements.add(element)
+        }
+
+        if (currentPage != PAGE_START) adapter.removeLoading()
+        adapter.addElements(elements)
+        swipeRefresh.isRefreshing = false
+
+        if (currentPage < totalPage) {
+            adapter.addLoading()
+        } else {
+            isLastPage = true
+        }
+        isLoading = false
+    }
+
     companion object {
         var isFabOpen = false
+        var isLastPage = false
+        var isLoading = false
+        var elementCount = 0
+        var currentPage = PAGE_START
+        const val totalPage = 10
         const val PREF_NAME = "setting"
     }
 }

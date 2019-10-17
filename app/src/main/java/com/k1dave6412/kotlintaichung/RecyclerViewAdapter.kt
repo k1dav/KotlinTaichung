@@ -15,10 +15,10 @@ class RecyclerViewAdapter : RecyclerView.Adapter<BaseViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder =
         when (viewType) {
-            VIEW_NORMAL -> ProgressHolder(
+            VIEW_NORMAL -> ViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.list_element, parent, false)
             )
-            else -> ViewHolder(
+            else -> ProgressHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.list_loading, parent, false)
             )
         }
