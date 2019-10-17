@@ -8,17 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.list_element.view.*
 
 
-abstract class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private var currentPosition: Int = 0
-
-    open fun onBind(position: Int) {
-        currentPosition = position
-        clear()
-    }
-
-    protected abstract fun clear()
-}
-
 class RecyclerViewAdapter : RecyclerView.Adapter<BaseViewHolder>() {
     private var isVisible = false
     private val mList: MutableList<ListElement> = mutableListOf()
@@ -106,4 +95,15 @@ class RecyclerViewAdapter : RecyclerView.Adapter<BaseViewHolder>() {
     companion object {
         const val VIEW_NORMAL = 1
     }
+}
+
+abstract class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private var currentPosition: Int = 0
+
+    open fun onBind(position: Int) {
+        currentPosition = position
+        clear()
+    }
+
+    protected abstract fun clear()
 }
