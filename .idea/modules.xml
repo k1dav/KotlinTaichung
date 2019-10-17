@@ -2,8 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/AndroidStudioProjects-KotlinTaichung.iml" filepath="$PROJECT_DIR$/AndroidStudioProjects-KotlinTaichung.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/AndroidStudioProjects-KotlinTaichung-app.iml" filepath="$PROJECT_DIR$/app/AndroidStudioProjects-KotlinTaichung-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/KotlinTaichung.iml" filepath="$PROJECT_DIR$/KotlinTaichung.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/KotlinTaichung-app.iml" filepath="$PROJECT_DIR$/app/KotlinTaichung-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sung-AndroidStudioProjects-KotlinTaichung.iml" filepath="$PROJECT_DIR$/sung-AndroidStudioProjects-KotlinTaichung.iml" />
     </modules>
   </component>
 </project>

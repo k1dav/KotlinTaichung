@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">KotlinTaichung</string>
+    <string name="download_receiver">下載收件人資料</string>
+    <string name="setting">伺服器連線設定</string>
 </resources>
