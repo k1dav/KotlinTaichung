@@ -2,4 +2,10 @@
     <string name="app_name">KotlinTaichung</string>
     <string name="download_receiver">下載收件人資料</string>
     <string name="setting">伺服器連線設定</string>
+    <string name="status">訂單狀態</string>
+    <string name="order_id">訂單編號</string>
+    <string name="order_created_at">訂單成立日期</string>
+    <string name="package_no">物流號碼</string>
+    <string name="receiver_name">收件人名字</string>
+    <string name="receiver_phone">收件人電話</string>
 </resources>

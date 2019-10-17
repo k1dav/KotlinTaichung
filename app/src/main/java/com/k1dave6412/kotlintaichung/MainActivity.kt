@@ -3,6 +3,7 @@ package com.k1dave6412.kotlintaichung
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputType
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.EditText
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         // set server address
         fabSetting.setOnClickListener {
             val editText = EditText(this@MainActivity)
+            editText.inputType = InputType.TYPE_TEXT_VARIATION_URI
             editText.text = Editable.Factory.getInstance()
                 .newEditable(sharedPreferences.getString("server", ""))
 
