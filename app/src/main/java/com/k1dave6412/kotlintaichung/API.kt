@@ -19,41 +19,38 @@ private val GetHttpCLient: HttpClient = HttpClient(Android) {
 }
 
 
-class API() {
+class API(urlString: String) {
     private val httpClient = GetHttpCLient
-    private val requestAddress = Url("http://192.168.66.120:5000/")
-
+    private val requestAddress = Url(urlString)
     private val json = Json(JsonConfiguration.Stable)
 
-    suspend fun getTasks(): FromTask {
-
+    suspend fun getOrders(): Orders {
         val deferredText = GlobalScope.async {
             try {
                 return@async httpClient.get<String> {
-                    url("${requestAddress}api/v1/tasks")
+                    url("${requestAddress}orders")
                 }
             } catch (e: Exception) {
                 throw e
             }
         }
-        return json.parse(FromTask.serializer(), deferredText.await())
+        return json.parse(Orders.serializer(), deferredText.await())
     }
 
-    suspend fun getTask(id: Int): FromTask {
-
+    suspend fun getOrder(id: String): Order {
         val deferredText = GlobalScope.async {
             try {
                 return@async httpClient.get<String> {
-                    url("${requestAddress}api/v1/tasks/$id")
+                    url("${requestAddress}order/?id=$id")
                 }
             } catch (e: Exception) {
                 throw e
             }
         }
-        return json.parse(FromTask.serializer(), deferredText.await())
+        return json.parse(Order.serializer(), deferredText.await())
     }
 
-    suspend fun postTask(task: Task): FromTask {
+    suspend fun getReceiver(id: String): FromTask {
 
         val deferredText = GlobalScope.async {
             try {

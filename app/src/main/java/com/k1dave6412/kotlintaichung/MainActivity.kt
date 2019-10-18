@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
             dialog.show()
         }
 
-        recyclerView.addOnScrollListener(object : PaginationListener(layoutManager){
+        recyclerView.addOnScrollListener(object : PaginationListener(layoutManager) {
             override fun loadMore() {
                 isLoading = true
                 currentPage++
