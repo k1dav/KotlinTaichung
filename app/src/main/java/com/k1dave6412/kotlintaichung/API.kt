@@ -28,7 +28,7 @@ class API(urlString: String) {
         val deferredText = GlobalScope.async {
             try {
                 return@async httpClient.get<String> {
-                    url("${requestAddress}orders")
+                    url("${requestAddress}orders/?start_date=2017-02-01&end_date=2017-02-28")
                 }
             } catch (e: Exception) {
                 throw e
@@ -50,20 +50,16 @@ class API(urlString: String) {
         return json.parse(Order.serializer(), deferredText.await())
     }
 
-    suspend fun getReceiver(id: String): FromTask {
-
+    suspend fun getReceiver(id: String): Receiver {
         val deferredText = GlobalScope.async {
             try {
                 return@async httpClient.post<String> {
-                    url("${requestAddress}api/v1/task/")
-                    body = json.stringify(Task.serializer(), task)
+                    url("${requestAddress}receiver/?id=$id")
                 }
             } catch (e: Exception) {
                 throw e
             }
         }
-        return json.parse(FromTask.serializer(), deferredText.await())
+        return json.parse(Receiver.serializer(), deferredText.await())
     }
-
-
 }
