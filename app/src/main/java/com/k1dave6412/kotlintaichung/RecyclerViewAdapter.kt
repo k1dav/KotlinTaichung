@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.list_element.view.*
 
 class RecyclerViewAdapter(val listener: OnElementClickListener) :
     RecyclerView.Adapter<BaseViewHolder>() {
-    private val mList: MutableList<ListElement> = mutableListOf()
+    val mList: MutableList<ListElement> = mutableListOf()
     private var isVisible = false
 
     override fun getItemCount(): Int {
@@ -65,6 +65,7 @@ class RecyclerViewAdapter(val listener: OnElementClickListener) :
             notifyItemRemoved(position)
         }
     }
+
 
     private fun getItem(position: Int): ListElement? {
         return mList[position]

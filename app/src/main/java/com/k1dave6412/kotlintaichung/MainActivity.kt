@@ -15,9 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.k1dave6412.kotlintaichung.PaginationListener.Companion.PAGE_START
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
 class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
@@ -35,7 +33,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     private val recyclerViewAdapter: RecyclerViewAdapter by lazy {
         RecyclerViewAdapter(object : OnElementClickListener {
             override fun onElementClick(element: ListElement) {
-                GlobalScope.launch (Dispatchers.Main){
+                GlobalScope.launch(Dispatchers.Main) {
                     val receiver = api.getReceiver(element.receiverID)
                     element.receiverName = receiver.name
                     element.receiverPhone = receiver.phone
@@ -85,6 +83,22 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
                 .setNegativeButton("取消", null)
                 .create()
             dialog.show()
+        }
+
+        fabDownloadReceiver.setOnClickListener {
+            GlobalScope.launch(Dispatchers.Main) {
+                recyclerViewAdapter.mList.map {
+                    async {
+                        if (it.receiverID != "" && it.receiverName.length > 10) {
+                            val receiver = api.getReceiver(it.receiverID)
+                            it.receiverName = receiver.name
+                            it.receiverPhone = receiver.phone
+                        }
+                    }
+                }.awaitAll()
+                Toast.makeText(this@MainActivity, "更新完成", Toast.LENGTH_SHORT).show()
+                recyclerViewAdapter.notifyDataSetChanged()
+            }
         }
 
         recyclerView.addOnScrollListener(object : PaginationListener(layoutManager) {

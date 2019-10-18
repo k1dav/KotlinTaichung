@@ -3,7 +3,6 @@ package com.k1dave6412.kotlintaichung
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.request.get
-import io.ktor.client.request.post
 import io.ktor.client.request.url
 import io.ktor.http.Url
 import kotlinx.coroutines.GlobalScope
@@ -13,8 +12,8 @@ import kotlinx.serialization.json.JsonConfiguration
 
 private val GetHttpCLient: HttpClient = HttpClient(Android) {
     engine {
-        connectTimeout = 120_000
-        socketTimeout = 120_000
+        connectTimeout = 60_000
+        socketTimeout = 60_000
     }
 }
 
@@ -28,27 +27,16 @@ class API(urlString: String) {
         val deferredText = GlobalScope.async {
             try {
                 return@async httpClient.get<String> {
-                    url("${requestAddress}orders/?date_field=order_created_at&" +
-                            "start_date=2017-02-01&end_date=2017-02-28&page=$page")
+                    url(
+                        "${requestAddress}orders/?date_field=order_created_at&" +
+                                "start_date=2017-02-01&end_date=2017-02-28&page=$page"
+                    )
                 }
             } catch (e: Exception) {
                 throw e
             }
         }
         return json.parse(Orders.serializer(), deferredText.await())
-    }
-
-    suspend fun getOrder(id: String): Order {
-        val deferredText = GlobalScope.async {
-            try {
-                return@async httpClient.get<String> {
-                    url("${requestAddress}order/?id=$id")
-                }
-            } catch (e: Exception) {
-                throw e
-            }
-        }
-        return json.parse(Order.serializer(), deferredText.await())
     }
 
     suspend fun getReceiver(id: String): Receiver {

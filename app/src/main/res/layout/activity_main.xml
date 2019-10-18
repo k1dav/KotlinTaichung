@@ -41,6 +41,7 @@
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:alpha="0"
+            android:background="#A7FFEB"
             android:text="@string/download_receiver" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -78,6 +79,7 @@
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:alpha="0"
+            android:background="#A7FFEB"
             android:text="@string/setting" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
