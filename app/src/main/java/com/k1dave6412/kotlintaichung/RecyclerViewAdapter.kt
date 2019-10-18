@@ -8,7 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.list_element.view.*
 
 
-class RecyclerViewAdapter : RecyclerView.Adapter<BaseViewHolder>() {
+class RecyclerViewAdapter(val listener: OnElementClickListener) :
+    RecyclerView.Adapter<BaseViewHolder>() {
     private val mList: MutableList<ListElement> = mutableListOf()
     private var isVisible = false
 
@@ -28,7 +29,7 @@ class RecyclerViewAdapter : RecyclerView.Adapter<BaseViewHolder>() {
         }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        holder.onBind(position)
+        holder.onBind(position, listener)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -78,8 +79,8 @@ class RecyclerViewAdapter : RecyclerView.Adapter<BaseViewHolder>() {
         private var tvReceiverName: TextView = itemView.tvReceiverName
         private var tvPhone: TextView = itemView.tvPhone
 
-        override fun onBind(position: Int) {
-            super.onBind(position)
+        override fun onBind(position: Int, listener: OnElementClickListener?) {
+            super.onBind(position, listener)
             val element = mList[position]
             tvStatus.text = element.status
             tvOrderID.text = element.id
@@ -89,6 +90,12 @@ class RecyclerViewAdapter : RecyclerView.Adapter<BaseViewHolder>() {
 
             if (element.receiverName == "") tvReceiverName.text = element.receiverID
             else tvReceiverName.text = element.receiverName
+
+            if (listener != null) {
+                itemView.setOnClickListener {
+                    listener.onElementClick(element)
+                }
+            }
         }
 
         override fun clear() {}
@@ -108,10 +115,14 @@ class RecyclerViewAdapter : RecyclerView.Adapter<BaseViewHolder>() {
 abstract class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private var currentPosition: Int = 0
 
-    open fun onBind(position: Int) {
+    open fun onBind(position: Int, listener: OnElementClickListener? = null) {
         currentPosition = position
         clear()
     }
 
     protected abstract fun clear()
+}
+
+interface OnElementClickListener {
+    fun onElementClick(element: ListElement)
 }

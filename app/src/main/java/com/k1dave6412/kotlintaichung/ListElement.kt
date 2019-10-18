@@ -5,8 +5,8 @@ data class ListElement(
     val orderCreateAt: String = "",
     val packageNo: String? = "",
     val status: String = "",
-    val receiverName: String = "",
-    val receiverPhone: String = "",
+    var receiverName: String = "",
+    var receiverPhone: String = "",
     val receiverID: String = ""
 )
 

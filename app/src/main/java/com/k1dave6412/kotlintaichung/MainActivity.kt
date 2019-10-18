@@ -8,12 +8,14 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.k1dave6412.kotlintaichung.PaginationListener.Companion.PAGE_START
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -31,7 +33,23 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         LinearLayoutManager(this)
     }
     private val recyclerViewAdapter: RecyclerViewAdapter by lazy {
-        RecyclerViewAdapter()
+        RecyclerViewAdapter(object : OnElementClickListener {
+            override fun onElementClick(element: ListElement) {
+                GlobalScope.launch (Dispatchers.Main){
+                    val receiver = api.getReceiver(element.receiverID)
+                    element.receiverName = receiver.name
+                    element.receiverPhone = receiver.phone
+
+                    val dialog = AlertDialog.Builder(this@MainActivity)
+                        .setTitle("收件人資料")
+                        .setMessage("收件人姓名：${receiver.name}\n收件人電話：${receiver.phone}")
+                        .setPositiveButton("OK", null)
+                        .create()
+                    dialog.show()
+                    recyclerViewAdapter.notifyDataSetChanged()
+                }
+            }
+        })
     }
 
     private fun initListener() {

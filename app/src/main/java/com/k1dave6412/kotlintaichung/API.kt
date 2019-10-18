@@ -54,7 +54,7 @@ class API(urlString: String) {
     suspend fun getReceiver(id: String): Receiver {
         val deferredText = GlobalScope.async {
             try {
-                return@async httpClient.post<String> {
+                return@async httpClient.get<String> {
                     url("${requestAddress}receiver/?id=$id")
                 }
             } catch (e: Exception) {
