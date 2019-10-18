@@ -14,11 +14,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.k1dave6412.kotlintaichung.PaginationListener.Companion.PAGE_START
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     private val sharedPreferences by lazy {
         getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+    }
+    private val api: API by lazy {
+        API(sharedPreferences.getString("server", "")!!)
     }
 
     // recycler view
@@ -68,7 +73,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
             override fun loadMore() {
                 isLoading = true
                 currentPage++
-                generateFakeData()
+                getOrders()
             }
 
             override fun isLastPage(): Boolean = isLastPage
@@ -86,8 +91,6 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = recyclerViewAdapter
-
-        generateFakeData()
     }
 
     // swipe refresh
@@ -96,38 +99,43 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         isLastPage = false
         elementCount = 0
         recyclerViewAdapter.clear()
-        generateFakeData()
+        getOrders()
     }
 
-    private fun generateFakeData() {
-        // 假資料生成
-        // TODO:  API
+    private fun getOrders() {
         val elements: MutableList<ListElement> = mutableListOf()
-        print(isLoading)
-        for (i in 0..29) {
-            elementCount++
-            val element = ListElement(
-                id = "id=$i",
-                orderCreateAt = "c=$i",
-                packageNo = "p=$i",
-                status = "成功",
-                receiverName = "name=$i",
-                receiverPhone = "phone=$i",
-                receiverID = "receive_id=$i"
-            )
-            elements.add(element)
-        }
+        GlobalScope.launch {
+            val data = api.getOrders(currentPage)
+            val orders = data.data
+            orders.forEach {
+                elements.add(
+                    ListElement(
+                        id = it.order_id,
+                        orderCreateAt = it.order_created_at,
+                        packageNo = it.package_no,
+                        status = it.status,
+                        receiverName = it.receiver_id,
+                        receiverPhone = "",
+                        receiverID = it.receiver_id
+                    )
+                )
+            }
+            val page = data.page
+            elementCount = page.total
+            totalPage = page.pages
+            isLastPage = !page.has_next
 
-        if (currentPage != PAGE_START) recyclerViewAdapter.removeLoading()
-        recyclerViewAdapter.addElements(elements)
-        swipeRefresh.isRefreshing = false
+            if (currentPage != PAGE_START) recyclerViewAdapter.removeLoading()
+            recyclerViewAdapter.addElements(elements)
+            swipeRefresh.isRefreshing = false
 
-        if (currentPage < totalPage) {
-            recyclerViewAdapter.addLoading()
-        } else {
-            isLastPage = true
+            if (currentPage < totalPage) {
+                recyclerViewAdapter.addLoading()
+            } else {
+                isLastPage = true
+            }
+            isLoading = false
         }
-        isLoading = false
     }
 
     private fun toggleFabMenu() {
@@ -158,7 +166,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         var isLoading = false
         var elementCount = 0
         var currentPage = PAGE_START
-        const val totalPage = 3
+        var totalPage = 3
         const val PREF_NAME = "setting"
     }
 }

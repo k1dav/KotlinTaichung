@@ -53,7 +53,8 @@ data class Order(
     val order_shipped_at: String? = null,
     val package_no: String? = null,
     val refund_status: String? = null,
-    val remark: String? = null
+    val remark: String? = null,
+    val status: String
 )
 
 

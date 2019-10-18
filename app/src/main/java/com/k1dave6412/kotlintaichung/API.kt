@@ -24,11 +24,12 @@ class API(urlString: String) {
     private val requestAddress = Url(urlString)
     private val json = Json(JsonConfiguration.Stable)
 
-    suspend fun getOrders(): Orders {
+    suspend fun getOrders(page: Int): Orders {
         val deferredText = GlobalScope.async {
             try {
                 return@async httpClient.get<String> {
-                    url("${requestAddress}orders/?start_date=2017-02-01&end_date=2017-02-28")
+                    url("${requestAddress}orders/?date_field=order_created_at&" +
+                            "start_date=2017-02-01&end_date=2017-02-28&page=$page")
                 }
             } catch (e: Exception) {
                 throw e
