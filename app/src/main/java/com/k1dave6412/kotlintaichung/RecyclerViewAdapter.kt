@@ -9,12 +9,16 @@ import kotlinx.android.synthetic.main.list_element.view.*
 
 
 class RecyclerViewAdapter : RecyclerView.Adapter<BaseViewHolder>() {
-    private var isVisible = false
     private val mList: MutableList<ListElement> = mutableListOf()
+    private var isVisible = false
 
+    override fun getItemCount(): Int {
+        return mList.size
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder =
         when (viewType) {
+            // 如果在 loading 會新增一個 laoding view, loading 完後再刪除換回正常的 view
             VIEW_NORMAL -> ViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.list_element, parent, false)
             )
@@ -23,28 +27,35 @@ class RecyclerViewAdapter : RecyclerView.Adapter<BaseViewHolder>() {
             )
         }
 
-    override fun getItemCount(): Int {
-        return mList.size
-    }
-
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         holder.onBind(position)
     }
 
+    override fun getItemViewType(position: Int): Int {
+        if (isVisible && position == mList.size - 1) {
+            return VIEW_LOADING
+        }
+        return VIEW_NORMAL
+    }
+
+    fun clear() {
+        mList.clear()
+        notifyDataSetChanged()
+    }
+
     fun addElements(newList: MutableList<ListElement>) {
-        // 新增元素
         mList.addAll(newList)
     }
 
     fun addLoading() {
-        // LOADING
+        // Loading
         isVisible = true
         mList.add(ListElement())
         notifyItemInserted(mList.size - 1)
     }
 
     fun removeLoading() {
-        // LOADING 完成後移除
+        // Loading 完成後移除
         isVisible = false
         val position = mList.size - 1
         val element = getItem(position)
@@ -54,14 +65,10 @@ class RecyclerViewAdapter : RecyclerView.Adapter<BaseViewHolder>() {
         }
     }
 
-    fun clear() {
-        mList.clear()
-        notifyDataSetChanged()
-    }
-
     private fun getItem(position: Int): ListElement? {
         return mList[position]
     }
+
 
     inner class ViewHolder internal constructor(itemView: View) : BaseViewHolder(itemView) {
         private var tvStatus: TextView = itemView.tvStatus
@@ -71,28 +78,29 @@ class RecyclerViewAdapter : RecyclerView.Adapter<BaseViewHolder>() {
         private var tvReceiverName: TextView = itemView.tvReceiverName
         private var tvPhone: TextView = itemView.tvPhone
 
-
-        override fun clear() {}
-
         override fun onBind(position: Int) {
             super.onBind(position)
-            val item = mList[position]
-            tvStatus.text = item.status
-            tvOrderID.text = item.id
-            tvOrderCreated.text = item.orderCreateAt
-            tvPackageNo.text = item.packageNo
-            tvPhone.text = item.receiverPhone
+            val element = mList[position]
+            tvStatus.text = element.status
+            tvOrderID.text = element.id
+            tvOrderCreated.text = element.orderCreateAt
+            tvPackageNo.text = element.packageNo
+            tvPhone.text = element.receiverPhone
 
-            if (item.receiverName == "") tvReceiverName.text = item.receiverID
-            else tvReceiverName.text = item.receiverName
+            if (element.receiverName == "") tvReceiverName.text = element.receiverID
+            else tvReceiverName.text = element.receiverName
         }
+
+        override fun clear() {}
     }
 
     inner class ProgressHolder internal constructor(itemView: View) : BaseViewHolder(itemView) {
         override fun clear() {}
     }
 
+
     companion object {
+        const val VIEW_LOADING = 0
         const val VIEW_NORMAL = 1
     }
 }

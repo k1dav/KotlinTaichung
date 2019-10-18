@@ -17,55 +17,56 @@ private val GetHttpCLient: HttpClient = HttpClient(Android) {
         socketTimeout = 120_000
     }
 }
-//
-//class API() {
-//    private val httpClient = GetHttpCLient
-//    private val requestAddress = Url("http://192.168.66.120:5000/")
-//
-//    private val json = Json(JsonConfiguration.Stable)
-//
-//    suspend fun getTasks(): FromTask {
-//
-//        val deferredText = GlobalScope.async {
-//            try {
-//                return@async httpClient.get<String> {
-//                    url("${requestAddress}api/v1/tasks")
-//                }
-//            } catch (e: Exception) {
-//                throw e
-//            }
-//        }
-//        return json.parse(FromTask.serializer(), deferredText.await())
-//    }
-//
-//    suspend fun getTask(id: Int): FromTask {
-//
-//        val deferredText = GlobalScope.async {
-//            try {
-//                return@async httpClient.get<String> {
-//                    url("${requestAddress}api/v1/tasks/$id")
-//                }
-//            } catch (e: Exception) {
-//                throw e
-//            }
-//        }
-//        return json.parse(FromTask.serializer(), deferredText.await())
-//    }
-//
-//    suspend fun postTask(task: Task): FromTask {
-//
-//        val deferredText = GlobalScope.async {
-//            try {
-//                return@async httpClient.post<String> {
-//                    url("${requestAddress}api/v1/task/")
-//                    body = json.stringify(Task.serializer(), task)
-//                }
-//            } catch (e: Exception) {
-//                throw e
-//            }
-//        }
-//        return json.parse(FromTask.serializer(), deferredText.await())
-//    }
-//
-//
-//}
+
+
+class API() {
+    private val httpClient = GetHttpCLient
+    private val requestAddress = Url("http://192.168.66.120:5000/")
+
+    private val json = Json(JsonConfiguration.Stable)
+
+    suspend fun getTasks(): FromTask {
+
+        val deferredText = GlobalScope.async {
+            try {
+                return@async httpClient.get<String> {
+                    url("${requestAddress}api/v1/tasks")
+                }
+            } catch (e: Exception) {
+                throw e
+            }
+        }
+        return json.parse(FromTask.serializer(), deferredText.await())
+    }
+
+    suspend fun getTask(id: Int): FromTask {
+
+        val deferredText = GlobalScope.async {
+            try {
+                return@async httpClient.get<String> {
+                    url("${requestAddress}api/v1/tasks/$id")
+                }
+            } catch (e: Exception) {
+                throw e
+            }
+        }
+        return json.parse(FromTask.serializer(), deferredText.await())
+    }
+
+    suspend fun postTask(task: Task): FromTask {
+
+        val deferredText = GlobalScope.async {
+            try {
+                return@async httpClient.post<String> {
+                    url("${requestAddress}api/v1/task/")
+                    body = json.stringify(Task.serializer(), task)
+                }
+            } catch (e: Exception) {
+                throw e
+            }
+        }
+        return json.parse(FromTask.serializer(), deferredText.await())
+    }
+
+
+}
